@@ -87,21 +87,3 @@ async def require_admin(current_user: User = Depends(get_current_user)):
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access denied. Admins only.",
         )
-
-async def require_owner_or_admin(
-    apartment_id: str,
-    current_user: User = Depends(get_current_user),
-    apartment_service: ApartmentService = Depends(get_apartment_service)
-):
-    if current_user is None:
-        raise HTTPException(status_code=401, detail="Authentication required")
-        
-    if current_user.admin:
-        return  # доступ разрешён
-
-    apartment = await apartment_service.get_apartment(apartment_id)
-    if apartment is None:
-        raise HTTPException(status_code=404, detail="Apartment not found")
-
-    if apartment.ownerId != current_user.userId:
-        raise HTTPException(status_code=403, detail="Not authorized to access this apartment")

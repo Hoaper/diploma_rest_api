@@ -90,7 +90,6 @@ async def create_apartment(
 async def get_apartment(
     apartment_id: str,
     apartment_service: ApartmentService = Depends(get_apartment_service),
-    current_user: User = Depends(get_current_user)  # ⬅️ авторизация
 ):
     return await apartment_service.get_apartment(apartment_id)
 
@@ -109,5 +108,5 @@ async def delete_apartment(
     current_user: User = Depends(get_current_user),
     apartment_service: ApartmentService = Depends(get_apartment_service)
 ):
-    await apartment_service.delete_apartment(apartment_id, current_user.userId)
+    await apartment_service.delete_apartment(apartment_id, current_user)
     return {"message": "Apartment deleted successfully."} 

@@ -1,8 +1,10 @@
 from typing import Optional, List
+from models.user import User
 from datetime import datetime
 from models.apartment import Apartment
 from repositories.apartment_repository import ApartmentRepository
 from fastapi import HTTPException
+from utils.misc import require_owner_or_admin
 
 class ApartmentService:
     def __init__(self, apartment_repository: ApartmentRepository):
@@ -27,13 +29,12 @@ class ApartmentService:
 
         return await self.apartment_repository.update(apartment_id, apartment_data)
 
-    async def delete_apartment(self, apartment_id: str, user_id: str) -> bool:
+    async def delete_apartment(self, apartment_id: str, user: User) -> bool:
+        user_id = user.userId
+        await require_owner_or_admin(apartment_id, user, self.apartment_repository)
         existing_apartment = await self.apartment_repository.get_by_id(apartment_id)
         if not existing_apartment:
             raise HTTPException(status_code=404, detail="Apartment not found")
-
-        if existing_apartment.ownerId != user_id:
-            raise HTTPException(status_code=403, detail="You are not the owner of this apartment")
 
         success = await self.apartment_repository.delete(apartment_id)
         if not success:
