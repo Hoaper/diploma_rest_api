@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from enum import Enum
 from bson import ObjectId
 
@@ -26,8 +26,14 @@ class BookingStatus(str, Enum):
     CANCELLED = "cancelled"
     COMPLETED = "completed"
 
+class CreateBooking(BaseModel):
+    apartmentId: str
+    message: Optional[str] = None
+    check_in_date: datetime
+    check_out_date: datetime
+
 class Booking(BaseModel):
-    bookingId: Optional[str] = None
+    bookingId: Optional[str] = Field(default=None, include_in_api=False) 
     apartmentId: str
     userId: str
     message: Optional[str] = None
@@ -36,14 +42,22 @@ class Booking(BaseModel):
     check_out_date: datetime
     created_at: datetime
     updated_at: datetime
-    payment_status: str = "pending"  # pending, completed, refunded
-    paymentId: Optional[str] = None
-
+    
     class Config:
         validate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {
             ObjectId: str
+        }
+        json_schema_extra = {
+            "example": {
+                "apartmentId": "string",
+                "message": "string",
+                "check_in_date": "2025-06-05T14:33:38.352Z",
+                "check_out_date": "2025-06-05T14:33:38.352Z",
+                "created_at": "2025-06-05T14:33:38.352Z",
+                "updated_at": "2025-06-05T14:33:38.352Z"
+            }
         }
 
     @classmethod

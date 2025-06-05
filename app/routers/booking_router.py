@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from typing import List
 from datetime import datetime
-from models.booking import Booking, BookingStatus
+from models.booking import Booking, BookingStatus, CreateBooking
 from services.booking_service import BookingService
 from dependencies import get_booking_service
 from dependencies import get_current_user
@@ -11,13 +11,16 @@ router = APIRouter(prefix="/api/v1", tags=["bookings"])
 
 @router.post("/bookings", response_model=Booking)
 async def create_booking(
-        booking: Booking,
+        booking: CreateBooking,
         booking_service: BookingService = Depends(get_booking_service),
         current_user: User = Depends(get_current_user),
 ):
-    booking.userId = current_user.userId
-
-    return await booking_service.create_booking(booking)
+    booking_data = booking.model_dump()
+    booking_data["userId"] = current_user.userId
+    booking_data["created_at"] = datetime.utcnow()
+    booking_data["updated_at"] = datetime.utcnow()
+    
+    return await booking_service.create_booking(Booking(**booking_data))
 
 @router.get("/bookings/{booking_id}", response_model=Booking)
 async def get_booking(
