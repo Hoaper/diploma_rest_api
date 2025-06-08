@@ -80,19 +80,5 @@ class ApartmentService:
             limit=limit
         )
 
-    async def get_available_apartments(
-        self,
-        check_in: datetime,
-        check_out: datetime,
-        skip: int = 0,
-        limit: int = 100
-    ) -> List[Apartment]:
-        return await self.apartment_repository.get_available(
-            check_in=check_in,
-            check_out=check_out,
-            skip=skip,
-            limit=limit
-        )
-
     async def get_promoted_apartments(self, skip: int = 0, limit: int = 100) -> List[Apartment]:
         return await self.apartment_repository.get_promoted(skip=skip, limit=limit) 

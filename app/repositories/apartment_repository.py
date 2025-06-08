@@ -138,28 +138,6 @@ class ApartmentRepository(BaseRepository[Apartment]):
             print(e)
             return []
 
-    async def get_available(
-        self,
-        check_in: datetime,
-        check_out: datetime,
-        skip: int = 0,
-        limit: int = 100
-    ) -> List[Apartment]:
-        try:
-            query = {
-                "available_from": {"$lte": check_in},
-                "available_until": {"$gte": check_out}
-            }
-
-            cursor = self.collection.find(query).skip(skip).limit(limit)
-            apartments = []
-            async for document in cursor:
-                apartments.append(Apartment.from_mongo(document))
-            return apartments
-        except Exception as e:
-            print(e)
-            return []
-
     async def get_promoted(self, skip: int = 0, limit: int = 100) -> List[Apartment]:
         try:
             cursor = self.collection.find({"is_promoted": True}).skip(skip).limit(limit)

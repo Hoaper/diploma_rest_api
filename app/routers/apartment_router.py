@@ -47,21 +47,6 @@ async def get_nearby_apartments(
         limit=limit
     )
 
-@router.get("/apartments/available", response_model=List[Apartment])
-async def get_available_apartments(
-    check_in: datetime = Query(...),
-    check_out: datetime = Query(...),
-    skip: int = Query(0),
-    limit: int = Query(100),
-    apartment_service: ApartmentService = Depends(get_apartment_service)
-):
-    return await apartment_service.get_available_apartments(
-        check_in=check_in,
-        check_out=check_out,
-        skip=skip,
-        limit=limit
-    )
-
 @router.get("/apartments/promoted", response_model=List[Apartment])
 async def get_promoted_apartments(
     skip: int = Query(0),

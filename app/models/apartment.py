@@ -41,8 +41,6 @@ class Apartment(BaseModel):
     floor: int
     number_of_rooms: int
     max_users: int
-    available_from: datetime
-    available_until: datetime
     university_nearby: str
     pictures: List[str]
     is_promoted: bool = False
